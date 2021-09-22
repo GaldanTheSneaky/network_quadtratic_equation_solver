@@ -13,6 +13,15 @@ class ApplicationType(enum.Enum):
 class ClientApp:
     def __init__(self, header, port, host, app_type, format='utf-8', disconnect_message="!DISCONNECT",
                  client_function=None):
+        """Creates a client that can perform 1 mathematical operation
+
+               Args:
+                   header: header of message
+                   port: port
+                   format: encoding format
+                   disconnect_message: message to send clients before disconnect
+                   client_function: function to perform
+               """
         self._header = header
         self._port = port
         self._host = host
@@ -24,7 +33,9 @@ class ClientApp:
         self._client.connect(self._addr)
         self._client_function = client_function
 
-    def send(self, msg):
+    def send(self, msg: str) -> None:
+        """Encodes message and send it to server
+        """
         message = msg.encode(self._format)
         msg_length = len(message)
         send_length = str(msg_length).encode(self._format)
@@ -33,7 +44,9 @@ class ClientApp:
         self._client.send(message)
         print(self._client.recv(2048).decode(self._format))
 
-    def run(self):
+    def run(self) -> None:
+        """Runs an application. Performs given operation on numbers received from server until disconnect_message
+        """
         self.send(str(self._app_type.value))
 
         while True:
